@@ -13,15 +13,23 @@ services:
     command:
       - --requirepass ${APP_PASS}
 
-  redis-commander:
-    image: ghcr.io/joeferner/redis-commander:latest
-    container_name: redis-commander
-    hostname: redis-commander
+  commander:
+    image: rediscommander/redis-commander
+    container_name: commander
     restart: always
-    environment:
-    - REDIS_HOSTS=local:redis:${APP_PORT}
+    hostname: commander
+    depends_on:
+      - redis
     ports:
-    - ${COMMANDER_PORT}:8081
+      - ${COMMANDER_PORT}:8081
+    networks:
+      - default
+    volumes:
+      - /data:/app/data
+    environment:
+      - REDIS_HOSTS=local:redis:6379?password=${APP_PASS}
+      - REDIS_COMMANDER_USERNAME=${COMMANDER_USER}
+      - REDIS_COMMANDER_PASSWORD=${COMMANDER_PASS}
 
 networks:
   default:
