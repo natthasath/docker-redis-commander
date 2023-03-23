@@ -10,14 +10,11 @@ services:
       - default
     volumes:
       - /root/redis/data:/db
-    command:
-      - --requirepass ${APP_PASS}
 
   commander:
     image: rediscommander/redis-commander
     container_name: commander
     restart: always
-    hostname: commander
     depends_on:
       - redis
     ports:
@@ -27,9 +24,7 @@ services:
     volumes:
       - /data:/app/data
     environment:
-      - REDIS_HOSTS=local:redis:6379?password=${APP_PASS}
-      - REDIS_COMMANDER_USERNAME=${COMMANDER_USER}
-      - REDIS_COMMANDER_PASSWORD=${COMMANDER_PASS}
+      - REDIS_HOSTS=local:redis:6379
 
 networks:
   default:
