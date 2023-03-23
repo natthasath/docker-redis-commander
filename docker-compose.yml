@@ -1,0 +1,41 @@
+version: '3.9'
+services:
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: always
+    ports:
+      - ${APP_PORT}:6379
+    networks:
+      - default
+    volumes:
+      - /root/redis/data:/db
+    command:
+      - --requirepass ${APP_PASS}
+
+  commander:
+    image: rediscommander/redis-commander
+    container_name: commander
+    restart: always
+    depends_on:
+      - redis
+    ports:
+      - ${COMMANDER_PORT}:8081
+    networks:
+      - default
+    volumes:
+      - /data:/app/data
+    environment:
+      - REDIS_HOSTS=local:redis:${APP_PORT}
+      - REDIS_COMMANDER_USERNAME=${COMMANDER_USER}
+      - REDIS_COMMANDER_PASSWORD=${COMMANDER_PASS}
+
+networks:
+  default:
+    driver: bridge
+
+volumes:
+  db:
+    driver: local
+  data:
+    driver: local
